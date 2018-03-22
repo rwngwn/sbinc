@@ -1,0 +1,37 @@
+* binfmt_misc
+
+
+
+Each line must be in a form of:
+
+:name:type:offset:magic:mask:interpreter:flags
+
+where:
+- *name* - name of a binary format
+- *type* - type of mechanism used to match format
+  - *E* - use file extension to match the format
+  - *M* - use 'magic number' to match the file
+- *magic* - extension/magic nubmer to be matched
+- *mask* - mask for magic number to select part of magic number that has to matched
+- *interpreter* - program which will run matching file
+- *flags* - 
+  - *P* - preserve the original program name typed by user in command line — by adding that name to argv
+  - *O* - open the file and pass descriptor to an interpreter
+  - *C* - determine new process credentials based on program file rather than interpreter file (setuid)
+  - *F* - to make the kernel open the binary at configuration time instead of lazily at startup time, so that it is available inside other mount namespaces and chroots as well.
+
+*To register our interpreter:*
+#+BEGIN_SRC sh :results none
+echo ':sbinc_sh:E::sh::/home/dbecvarik/repo/binfmt/src/github.com/dbecvarik/sbinc/sbinc:OC' | sudo tee /proc/sys/fs/binfmt_misc/register
+echo ':sbinc_py:E::py::/home/dbecvarik/repo/binfmt/src/github.com/dbecvarik/sbinc/sbinc:OC' | sudo tee /proc/sys/fs/binfmt_misc/register
+#+END_SRC
+
+*To remove our interpreter:*
+#+BEGIN_SRC sh :results none
+echo -1 | sudo tee /proc/sys/fs/binfmt_misc/sbinc_sh
+echo -1 | sudo tee /proc/sys/fs/binfmt_misc/sbinc_py
+#+END_SRC
+
+
+
+
